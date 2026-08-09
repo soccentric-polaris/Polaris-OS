@@ -1,0 +1,10 @@
+header:
+  version: 14
+
+repos:
+  meta-polaris:
+    url: git@github.com:SiliconCentric/meta-polaris.git
+    branch: scarthgap
+    path: meta/meta-polaris
+    layers:
+      .:
