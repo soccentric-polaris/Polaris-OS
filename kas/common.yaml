@@ -2,7 +2,9 @@ header:
   version: 14
   includes:
     - repos/poky.yaml
+    - repos/meta-arm.yaml
     - repos/meta-openembedded.yaml
+    - repos/meta-renesas.yaml
     - repos/meta-swupdate.yaml
     - repos/meta-polaris.yaml
 
@@ -29,3 +31,7 @@ local_conf_header:
 
     # Swupdate specific variables
     SWUPDATE_INIT = "systemd"
+
+    # RZ/G2L boots via the Renesas BSP boot chain (Flash Writer → U-Boot SPL →
+    # U-Boot → Linux). TF-A is provided by meta-arm / meta-renesas.
+    # Kernel is Image; DTB is renesas/r9a07g044l2-smarc.dtb.

@@ -1,5 +1,5 @@
 # =============================================================================
-# Polaris OS — Intel x86 (LattePanda) Yocto Build System
+# Polaris OS — Renesas RZ Yocto Build System
 # =============================================================================
 
 # --- Image names -------------------------------------------------------------
@@ -37,7 +37,7 @@ endif
 
 # --- Board -------------------------------------------------------------------
 # Select target board — must match a file in kas/boards/<BOARD>.yaml
-# Boards: polaris (genericx86-64 / LattePanda)
+# Boards: polaris (RZ/G2L SMARC)
 BOARD            ?= polaris
 KAS_CONFIG       := kas/boards/$(BOARD).yaml
 
@@ -182,8 +182,26 @@ swu: build
 	    { echo "ERROR: No .rootfs.ext4 found. Ensure 'ext4' is in IMAGE_FSTYPES."; exit 1; }
 	@echo "Packaging OTA update from: $(ROOTFS)"
 	@mkdir -p $(BUILD_DIR)/swu
+
+	# --- rootfs ---
 	@gzip -kfc "$(ROOTFS)" > "$(BUILD_DIR)/swu/rootfs.ext4.gz"
-	@sed "s|@@VERSION@@|$(SWU_VERSION)|" \
+
+	# --- kernel + DTB (RZ/G2L) ---
+	$(eval KERNEL := $(shell find $(BUILD_DIR)/tmp/deploy/images/$(MACHINE) \
+	    -name 'Image' 2>/dev/null | sort -V | tail -1))
+	$(eval DTB := $(shell find $(BUILD_DIR)/tmp/deploy/images/$(MACHINE) \
+	    -name 'r9a07g044l2-smarc.dtb' 2>/dev/null | sort -V | tail -1))
+	@test -n "$(KERNEL)" || \
+	    { echo "WARNING: Image not found — kernel will not be updated in this .swu"; }
+	@test -n "$(DTB)" || \
+	    { echo "WARNING: r9a07g044l2-smarc.dtb not found — DTB will not be updated in this .swu"; }
+	@[ -n "$(KERNEL)" ] && cp "$(KERNEL)" "$(BUILD_DIR)/swu/Image" || true
+	@[ -n "$(DTB)" ]    && cp "$(DTB)"    "$(BUILD_DIR)/swu/renesas-r9a07g044l2-smarc.dtb" || true
+
+	# --- sw-description ---
+	@sed -e "s|@@VERSION@@|$(SWU_VERSION)|" \
+	    -e "s|@@KERNEL@@|Image|" \
+	    -e "s|@@DTB@@|renesas-r9a07g044l2-smarc.dtb|" \
 	    meta/meta-polaris/swupdate/sw-description \
 	    > "$(BUILD_DIR)/swu/sw-description"
 	@cp meta/meta-polaris/swupdate/pre-install.sh  "$(BUILD_DIR)/swu/"
@@ -196,12 +214,12 @@ swu: build
 	        "$(BUILD_DIR)/swu/sw-description"; \
 	    echo "Packing SIGNED .swu ..."; \
 	    cd "$(BUILD_DIR)/swu" && \
-	        printf 'sw-description\nsw-description.sig\npre-install.sh\npost-install.sh\nrootfs.ext4.gz\n' | \
+	        printf 'sw-description\nsw-description.sig\npre-install.sh\npost-install.sh\nrootfs.ext4.gz\nImage\nrenesas-r9a07g044l2-smarc.dtb\n' | \
 	        cpio -ov -H newc > "$(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu"; \
 	else \
 	    echo "WARNING: No private key found — packing UNSIGNED .swu (run scripts/generate-swu-keys.sh to enable signing)"; \
 	    cd "$(BUILD_DIR)/swu" && \
-	        printf 'sw-description\npre-install.sh\npost-install.sh\nrootfs.ext4.gz\n' | \
+	        printf 'sw-description\npre-install.sh\npost-install.sh\nrootfs.ext4.gz\nImage\nrenesas-r9a07g044l2-smarc.dtb\n' | \
 	        cpio -ov -H newc > "$(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu"; \
 	fi
 	@echo "OTA package: $(BUILD_DIR)/$(BOARD)-$(SWU_VERSION).swu"
@@ -305,5 +323,5 @@ help:
 	@printf "\nUtilities:\n"
 	@printf "  %-24s %s\n" "completion"         "Install bash tab-completion"
 	@printf "\nBoards:\n"
-	@printf "  polaris (genericx86-64 / LattePanda)\n"
+	@printf "  polaris (RZ/G2L SMARC)\n"
 	@printf "\n"

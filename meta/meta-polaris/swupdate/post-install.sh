@@ -1,52 +1,51 @@
 #!/bin/bash
-# SWUpdate post-install script for Sequoia Intel x86 A/B rootfs updates.
+# SWUpdate post-install script — included in every .swu package
+#
+# Updates /boot/extlinux/extlinux.conf so that U-Boot boots the newly
+# written slot on the next reboot, writes boot_state for the watchdog,
+# and sets the U-Boot env for firmware-level rollback.
 
 set -euo pipefail
 
 TARGET_SLOT=$(cat /run/swupdate-target-slot)
-TARGET_DEV=$(cat /run/swupdate-target-dev)
-TARGET_LABEL="rootfs-${TARGET_SLOT}"
-TARGET_ROOT_ARG="root=LABEL=${TARGET_LABEL}"
+TARGET_DEV=$(cat  /run/swupdate-target-dev)
 
-echo "[swupdate post-install] activating slot ${TARGET_SLOT} (${TARGET_DEV}, label=${TARGET_LABEL})"
+echo "[swupdate post-install] activating slot ${TARGET_SLOT} (${TARGET_DEV})"
 
-BOOT_WAS_RO=0
-if findmnt -n -o OPTIONS /boot 2>/dev/null | grep -qw ro; then
-    BOOT_WAS_RO=1
-fi
-mount -o remount,rw /boot 2>/dev/null || true
-
-UPDATED=0
-
-if [[ -f /boot/cmdline.txt ]]; then
-    sed -Ei "s#root=[^ ]+#${TARGET_ROOT_ARG}#" /boot/cmdline.txt
-    UPDATED=1
-fi
-
-if compgen -G "/boot/loader/entries/*.conf" > /dev/null; then
-    for entry in /boot/loader/entries/*.conf; do
-        sed -Ei "s#root=[^ ]+#${TARGET_ROOT_ARG}#" "${entry}"
-    done
-    UPDATED=1
-fi
-
-for grub_cfg in /boot/grub/grub.cfg /boot/grub2/grub.cfg; do
-    if [[ -f "${grub_cfg}" ]]; then
-        sed -Ei "s#root=[^ ]+#${TARGET_ROOT_ARG}#g" "${grub_cfg}"
-        UPDATED=1
-    fi
-done
-
-if [[ "${UPDATED}" -eq 0 ]]; then
-    echo "[swupdate post-install] ERROR: no supported boot config found under /boot" >&2
+TARGET_PARTUUID=$(blkid -s PARTUUID -o value "${TARGET_DEV}")
+if [[ -z "${TARGET_PARTUUID}" ]]; then
+    echo "[swupdate post-install] ERROR: cannot read PARTUUID from ${TARGET_DEV}" >&2
     exit 1
 fi
 
-if [[ "${BOOT_WAS_RO}" -eq 1 ]]; then
-    mount -o remount,ro /boot 2>/dev/null || true
-fi
+mount -o remount,rw /boot
 
-echo "[swupdate post-install] boot config updated to ${TARGET_ROOT_ARG}"
+cp /boot/extlinux/extlinux.conf /boot/extlinux/extlinux.conf.prev
+
+sed -i "s|root=PARTUUID=[a-fA-F0-9-]*|root=PARTUUID=${TARGET_PARTUUID}|" \
+    /boot/extlinux/extlinux.conf
+
+printf 'slot=%s\ntries_remaining=3\nconfirmed=false\n' "${TARGET_SLOT}" \
+    > /boot/boot_state
+
+mount -o remount,ro /boot
+
+echo "[swupdate post-install] extlinux.conf → root=PARTUUID=${TARGET_PARTUUID}"
+echo "[swupdate post-install] boot_state written (slot=${TARGET_SLOT} tries=3)"
+
+# Set U-Boot environment variables for firmware-level rollback.
+if command -v fw_setenv &>/dev/null; then
+    fw_setenv upgrade_available 1 \
+        || logger -t swupdate-post-install \
+              "ERROR: fw_setenv upgrade_available 1 failed — U-Boot env may be read-only or corrupt"
+    fw_setenv bootcount 0 \
+        || logger -t swupdate-post-install \
+              "ERROR: fw_setenv bootcount 0 failed — U-Boot env may be read-only or corrupt"
+    fw_setenv bootlimit 3 \
+        || logger -t swupdate-post-install \
+              "ERROR: fw_setenv bootlimit 3 failed — U-Boot env may be read-only or corrupt"
+    echo "[swupdate post-install] U-Boot env: upgrade_available=1 bootcount=0 bootlimit=3"
+fi
 
 rm -f /dev/swupdate-inactive \
       /run/swupdate-target-slot \
