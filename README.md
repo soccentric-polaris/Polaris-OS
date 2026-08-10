@@ -1,13 +1,13 @@
 # Polaris-OS
 
-Containerized Yocto/OpenEmbedded build system using `kas` + Docker.
-Hardware-neutral template targeting `genericx86-64` (EFI/GRUB boot) by
-default, with A/B OTA updates via SWUpdate.
+Containerized Yocto/OpenEmbedded build system using `kas` + Docker for the
+**Renesas RZ** platform (default board: RZ/G2L SMARC), with A/B OTA updates
+via SWUpdate.
 
 ## Quick Start
 
 ```bash
-# Build default board (generic x86-64)
+# Build default board (RZ/G2L SMARC)
 make image
 
 # Explicit board selection
@@ -33,7 +33,8 @@ make flash polaris DEVICE=/dev/sdX
 - `kas/boards/*.yaml`: machine-specific board files
 - `kas/repos/*.yaml`: external layer repository definitions
 
-Layer repos: `poky`, `meta-openembedded`, `meta-swupdate`, `meta-polaris`.
+Layer repos: `poky`, `meta-arm`, `meta-openembedded`, `meta-renesas`,
+`meta-swupdate`, `meta-polaris`.
 
 ## Common Targets
 
