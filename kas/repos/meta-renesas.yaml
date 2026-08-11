@@ -6,5 +6,5 @@ repos:
     url: https://github.com/renesas-rz/meta-renesas
     refspec: scarthgap/rz
     layers:
-      meta-rz-common:
       meta-rz-bsp:
+      meta-rz-distro:

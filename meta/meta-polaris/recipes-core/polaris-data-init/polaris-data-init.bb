@@ -9,7 +9,6 @@ SRC_URI = " \
     file://polaris-data-init.service \
 "
 
-S = "${WORKDIR}"
 
 inherit systemd
 

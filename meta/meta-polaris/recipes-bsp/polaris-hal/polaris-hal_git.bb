@@ -8,7 +8,7 @@ LICENSE = "CLOSED"
 LIC_FILES_CHKSUM = "file://security.md;md5=1606e3c70e7eb33ddfd7fa686c3b5ff0"
 
 SRC_URI = " \
-    git://github.com/SiliconCentric/Polaris-HAL.git;protocol=ssh;user=git;branch=master \
+    git://github.com/SiliconCentric/Polaris-HAL.git;protocol=ssh;user=git;branch=main \
     file://security.md \
 "
 SRCREV = "${AUTOREV}"

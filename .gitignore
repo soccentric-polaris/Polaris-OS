@@ -62,3 +62,10 @@ deploy/
 meta/*
 !meta/meta-polaris/
 !meta/meta-polaris/**
+
+# ─── Upstream Yocto layers checked out by kas at the repo root ──────────────
+meta-arm/
+meta-openembedded/
+meta-renesas/
+meta-swupdate/
+poky/
