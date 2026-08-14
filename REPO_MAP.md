@@ -1,6 +1,6 @@
 # Polaris-OS
 
-**Remote:** `git@github.com:SiliconCentric/Polaris-OS.git`
+**Remote:** `git@github.com:soccentric-polaris/Polaris-OS.git`
 **Parent project:** [Polaris](../Polaris.md) (target hardware: **Renesas RZ/G2L** 64-bit Arm MPU, R9A07G044L.)
 **Leaf type:** `<Project>-OS`
 **Status:** REAL — actively built out

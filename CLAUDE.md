@@ -60,7 +60,7 @@ rollback. `make swu` builds an `.swu` package; signing via
 | `meta-oe`           | meta-openembedded (scarthgap) | Package set                          |
 | `meta-renesas`      | renesas-rz/meta-renesas (`scarthgap/rz`) | Renesas RZ BSP        |
 | `meta-swupdate`     | sbabic/meta-swupdate (scarthgap) | swupdate OTA framework           |
-| `meta-polaris`      | SiliconCentric/meta-polaris (local, in `meta/`) | Polaris image, HAL, swu config |
+| `meta-polaris`      | soccentric-polaris/meta-polaris (local, in `meta/`) | Polaris image, HAL, swu config |
 
 ## Repo Notes
 
