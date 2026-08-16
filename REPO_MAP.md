@@ -10,7 +10,8 @@ Yocto-based embedded Linux OS for the **Renesas RZ/G2L** platform. Built with
 OTA via `swupdate`.
 
 **Board:** default `polaris` (machine `smarc-rzg2l`, RZ/G2L SMARC Evaluation
-Kit). Platform customization lives in `meta/meta-polaris` (committed locally);
+Kit). Platform customization lives in `meta/meta-polaris`, a nested clone of its
+own upstream `soccentric-polaris/meta-polaris` (fetched by kas);
 upstream layers (`poky`, `meta-arm`, `meta-openembedded`, `meta-renesas`,
 `meta-swupdate`) are checked out by kas into a **gitignored** `layers/`
 directory and must never be hand-edited.
@@ -28,8 +29,8 @@ Flash Writer → U-Boot SPL → U-Boot → Linux (Image + renesas/r9a07g044l2-sm
 swupdate via filesystem label + U-Boot env), `data` (`/home`, persistent).
 See `meta/meta-polaris/wic/sdimage-rzg2l.wks`.
 
-**Local layer:** `meta/meta-polaris` is committed in-repo (see `.gitignore`),
-matching the Acadia/Arches/Zion/Joshua/Pinnacle/Sequoia/Vela convention.
+**Local layer:** `meta/meta-polaris` is a nested clone with its own upstream
+at `soccentric-polaris/meta-polaris.git` (see `.gitignore`).
 
 ---
 Part of the `Polaris` project in the `project-managers` fleet. See
