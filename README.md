@@ -2,11 +2,32 @@
 
 ## Project Summary
 
-Polaris-OS is a containerized Yocto/OpenEmbedded build repository for producing the Polaris embedded Linux image. KAS configuration under `kas/` defines shared settings, a Polaris board, and external layer repositories including Poky, meta-arm, meta-openembedded, meta-Renesas, meta-SWUpdate, and meta-Polaris. Docker makefiles under `docker/yocto`, `docker/sdk`, and `docker/esdk` provide isolated build environments for the image, SDK, and extensible SDK. The root Makefile is the primary interface for building and deploying these artifacts.
+- Polaris-OS is a containerized Yocto/OpenEmbedded build repository for
+  producing the Polaris embedded Linux image. KAS configuration under
+  `kas/` defines shared settings, a Polaris board, and external layer
+  repositories including Poky, meta-arm, meta-openembedded, meta-Renesas,
+  meta-SWUpdate, and meta-Polaris. Docker makefiles under `docker/yocto`,
+  `docker/sdk`, and `docker/esdk` provide isolated build environments for
+  the image, SDK, and extensible SDK. The root Makefile is the primary
+  interface for building and deploying these artifacts.
 
-The checked-in configuration and documentation describe an A/B update design using SWUpdate, board-specific image generation, SDK and eSDK packaging, shell access, flashing, and deployment helpers. `feature/feature.txt` and `feature/layout.txt` record the current feature/layout intent, while `scripts/generate-swu-keys.sh` supports creation of update-signing material. `REPO_MAP.md`, `CLAUDE.md`, and `CHANGELOG.md` provide repository guidance and history. This repository is principally build/configuration material: it does not contain a conventional application source tree or an automated test directory.
+- The checked-in configuration and documentation describe an A/B update
+  design using SWUpdate, board-specific image generation, SDK and eSDK
+  packaging, shell access, flashing, and deployment helpers.
+  `feature/feature.txt` and `feature/layout.txt` record the current
+  feature/layout intent, while `scripts/generate-swu-keys.sh` supports
+  creation of update-signing material. `REPO_MAP.md`, `CLAUDE.md`, and
+  `CHANGELOG.md` provide repository guidance and history. This repository
+  is principally build/configuration material: it does not contain a
+  conventional application source tree or an automated test directory.
 
-Declared targets include `make image`, `build`, `rebuild-image`, `shell`, `sdk`, `esdk`, `swu`, `flash`, deployment targets, cleanup, and help. Because Yocto builds depend on Docker, network-fetched layers, host permissions, board configuration, and target media, the presence of KAS entries is not proof that a complete image or update has been produced. Build reproducibility, boot, flashing, A/B rollback, and signed update installation remain manual or environment-dependent checks.
+- Declared targets include `make image`, `build`, `rebuild-image`, `shell`,
+  `sdk`, `esdk`, `swu`, `flash`, deployment targets, cleanup, and help.
+  Because Yocto builds depend on Docker, network-fetched layers, host
+  permissions, board configuration, and target media, the presence of KAS
+  entries is not proof that a complete image or update has been produced.
+  Build reproducibility, boot, flashing, A/B rollback, and signed update
+  installation remain manual or environment-dependent checks.
 
 ## Feature Inventory
 
