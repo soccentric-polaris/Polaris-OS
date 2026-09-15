@@ -18,6 +18,12 @@ local_conf_header:
     # Init manager
     INIT_MANAGER = "systemd"
 
+    # webconfigd talks to systemd over D-Bus via polkit (see its recipe's
+    # 50-webconfigd.polkit.rules). polkit is skipped unless this distro
+    # feature is enabled -- without it, RRECOMMENDS:webconfigd = "... polkit"
+    # has no buildable provider and the image fails to build outright.
+    DISTRO_FEATURES:append = " polkit"
+
     # SD card / eMMC image output
     IMAGE_FSTYPES = "wic.bz2 wic.bmap ext4"
 
