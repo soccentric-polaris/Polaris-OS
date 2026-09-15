@@ -7,6 +7,8 @@ header:
     - repos/meta-renesas.yaml
     - repos/meta-swupdate.yaml
     - repos/meta-polaris.yaml
+    - repos/polaris-configuration.yaml
+    - repos/polaris-instrumentation.yaml
 
 distro: poky
 target: polaris-image
