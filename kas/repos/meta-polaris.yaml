@@ -3,7 +3,7 @@ header:
 
 repos:
   meta-polaris:
-    url: git@github.com:soccentric-polaris/meta-polaris.git
+    url: https://github.com/soccentric-polaris/meta-polaris.git
     branch: develop
     path: meta/meta-polaris
     layers:
